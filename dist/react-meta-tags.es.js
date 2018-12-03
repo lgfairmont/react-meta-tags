@@ -8,6 +8,42 @@
 import React, { Component, Children } from 'react';
 import ReactDOM from 'react-dom';
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function () {
+    var self = this,
+        args = arguments;
+    return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+
+      _next(undefined);
+    });
+  };
+}
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -396,51 +432,87 @@ function (_Component) {
     }
   }, {
     key: "handleChildrens",
-    value: function handleChildrens() {
-      var _this = this;
+    value: function () {
+      var _handleChildrens = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var _this = this;
 
-      var children = this.props.children;
+        var children, headComponent;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                children = this.props.children;
 
-      if (this.context.extract) {
-        return;
+                if (!this.context.extract) {
+                  _context.next = 3;
+                  break;
+                }
+
+                return _context.abrupt("return");
+
+              case 3:
+                headComponent = React.createElement("div", {
+                  className: "react-head-temp"
+                }, children);
+                _context.t0 = ReactDOM;
+                _context.next = 7;
+                return headComponent;
+
+              case 7:
+                _context.t1 = _context.sent;
+                _context.t2 = this.temporaryElement;
+
+                _context.t3 = function () {
+                  var childStr = _this.temporaryElement.innerHTML; //if html is not changed return
+
+                  if (_this.lastChildStr === childStr) {
+                    return;
+                  }
+
+                  _this.lastChildStr = childStr;
+                  var childNodes = Array.prototype.slice.call(_this.temporaryElement.querySelector('.react-head-temp').children);
+                  var head = document.head;
+                  var headHtml = head.innerHTML; //filter children remove if children has not been changed
+
+                  childNodes = childNodes.filter(function (child) {
+                    return headHtml.indexOf(getDomAsString(child)) === -1;
+                  }); //remove duplicate title and meta from head
+
+                  childNodes.forEach(function (child) {
+                    var tag = child.tagName.toLowerCase();
+
+                    if (tag === 'title') {
+                      var title = getDuplicateTitle();
+                      if (title) removeChild(head, title);
+                    } else if (tag === 'meta') {
+                      var meta = getDuplicateMeta(child);
+                      if (meta) removeChild(head, meta);
+                    } else if (tag === 'link' && child.rel === 'canonical') {
+                      var link = getDuplicateCanonical(child);
+                      if (link) removeChild(head, link);
+                    }
+                  });
+                  appendChild(document.head, childNodes);
+                };
+
+                _context.t0.render.call(_context.t0, _context.t1, _context.t2, _context.t3);
+
+              case 11:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function handleChildrens() {
+        return _handleChildrens.apply(this, arguments);
       }
 
-      var headComponent = React.createElement("div", {
-        className: "react-head-temp"
-      }, children);
-      ReactDOM.render(headComponent, this.temporaryElement, function () {
-        var childStr = _this.temporaryElement.innerHTML; //if html is not changed return
-
-        if (_this.lastChildStr === childStr) {
-          return;
-        }
-
-        _this.lastChildStr = childStr;
-        var childNodes = Array.prototype.slice.call(_this.temporaryElement.querySelector('.react-head-temp').children);
-        var head = document.head;
-        var headHtml = head.innerHTML; //filter children remove if children has not been changed
-
-        childNodes = childNodes.filter(function (child) {
-          return headHtml.indexOf(getDomAsString(child)) === -1;
-        }); //remove duplicate title and meta from head
-
-        childNodes.forEach(function (child) {
-          var tag = child.tagName.toLowerCase();
-
-          if (tag === 'title') {
-            var title = getDuplicateTitle();
-            if (title) removeChild(head, title);
-          } else if (tag === 'meta') {
-            var meta = getDuplicateMeta(child);
-            if (meta) removeChild(head, meta);
-          } else if (tag === 'link' && child.rel === 'canonical') {
-            var link = getDuplicateCanonical(child);
-            if (link) removeChild(head, link);
-          }
-        });
-        appendChild(document.head, childNodes);
-      });
-    }
+      return handleChildrens;
+    }()
   }, {
     key: "render",
     value: function render() {
