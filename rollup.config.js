@@ -42,6 +42,7 @@ const defaultConfig = {
       babelrc: false,
       ...babelConfig,
       exclude: "node_modules/**",
+      runtimeHelpers: true,
       presets: ['@babel/preset-react', ['@babel/env', { modules: false }]]
     }),
     resolve(),
